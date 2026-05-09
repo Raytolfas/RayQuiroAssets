@@ -5,9 +5,25 @@ param(
 
 $ErrorActionPreference = "Stop"
 $host.UI.RawUI.WindowTitle = "RayQuiro Installer"
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 function Write-Step([string]$text) {
     Write-Host "[RayQuiro Installer] $text"
+}
+
+function Download-File([string]$url, [string]$outFile) {
+    try {
+        Invoke-WebRequest -Uri $url -OutFile $outFile -UseBasicParsing
+        return
+    } catch {
+        if (Get-Command curl.exe -ErrorAction SilentlyContinue) {
+            & curl.exe -L --fail --silent --show-error $url -o $outFile
+            if ($LASTEXITCODE -eq 0) {
+                return
+            }
+        }
+        throw
+    }
 }
 
 function Add-ToUserPath([string]$targetPath) {
@@ -37,7 +53,7 @@ Write-Step "Preparing temporary folder"
 New-Item -ItemType Directory -Force -Path $tempRoot | Out-Null
 
 Write-Step "Downloading update manifest"
-Invoke-WebRequest -Uri $ManifestUrl -OutFile $manifestPath
+Download-File $ManifestUrl $manifestPath
 $manifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
 
 $downloadUrl = $manifest.downloadUrl
@@ -50,7 +66,7 @@ if ([string]::IsNullOrWhiteSpace($downloadUrl)) {
 }
 
 Write-Step "Downloading rqio.exe"
-Invoke-WebRequest -Uri $downloadUrl -OutFile $downloadPath
+Download-File $downloadUrl $downloadPath
 
 Write-Step "Creating install folders"
 New-Item -ItemType Directory -Force -Path $installBin | Out-Null
