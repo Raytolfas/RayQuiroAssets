@@ -1,1 +1,10 @@
-
+{
+  "frameworks": [
+    {
+      "name": "telebot",
+      "repo": "RayQuiro/Telebot",
+      "branch": "main",
+      "description": "Telegram bot framework for RayQuiro with long polling, commands, buttons, documents, and Bot API helpers."
+    }
+  ]
+}
