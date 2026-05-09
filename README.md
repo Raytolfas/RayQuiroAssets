@@ -25,7 +25,7 @@ rqio version
 One-line install from GitHub Raw:
 
 ```powershell
-irm https://raw.githubusercontent.com/Raytolfas/RayQuiro/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/Raytolfas/RayQuiroAssets/main/install.ps1 | iex
 ```
 
 The installer:
